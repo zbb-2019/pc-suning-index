@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Js练习</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        #wapper {
+            width: 830px;
+            height: 482px;
+            position: relative;
+            margin: 50px auto;
+            border: 2px solid purple;
+            overflow: hidden;
+        }
+        
+        #uu {
+            list-style-type: none;
+            float: left;
+            width: 20000px;
+            height: 482px;
+            display: block;
+            position: absolute;
+        }
+        
+        #uu li {
+            float: left;
+            width: 830px;
+            height: 482px;
+            /* margin-right: 20px; */
+            /* padding: 10px; */
+        }
+        
+        #dv1 {
+            width: 830px;
+            height: 60px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            display: none;
+        }
+        
+        #dv1 span {
+            display: block;
+            position: absolute;
+            width: 30px;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            font-size: 30px;
+            background-color: rgba(0, 0, 0, .3);
+            color: white;
+            cursor: pointer;
+        }
+        
+        #dv1 span:first-child {
+            left: 0;
+        }
+        
+        #dv1 span:last-child {
+            right: 0;
+        }
+        
+        #wapper:hover #dv1 {
+            display: block;
+        }
+        
+        #oo {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            margin: 0 10px 10px 0;
+        }
+        
+        #oo li {
+            float: left;
+            list-style-type: none;
+            cursor: pointer;
+        }
+        
+        #oo li a {
+            display: block;
+            width: 20px;
+            height: 20px;
+            text-decoration: none;
+            background-color: #333;
+            color: white;
+            text-align: center;
+            border: 1px solid #000;
+            margin: 2px;
+        }
+        
+        .current {
+            background-color: #fff;
+            color: #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="wapper">
+        <ul id="uu">
+        </ul>
+        <div id="dv1">
+            <span id="left">&lt;</span>
+            <span id="right">&gt;</span>
+        </div>
+        <ol id="oo">
+        </ol>
+    </div>
+    <script>
+        //根据id获取元素
+        function my$(id) {
+            return document.getElementById(id);
+        }
+        var current = 0;
+        //平行移动容器
+        function anim(element, target) {
+
+            //每次进入清空定时器
+            clearInterval(element.timeId);
+            //取得元素当前未知
+            current = element.offsetLeft;
+            //每个周期移动步数
+            var step = 10;
+            //确定容器左右移动方向
+            step = current - target > 0 ? -step : step;
+
+            //设置定时器定时移动相应步数
+            element.timeId = setInterval(function() {
+                //修改容器当前位置
+                current += step;
+                if (Math.abs(current - target) >= Math.abs(step)) {
+                    element.style.left = current + "px";
+                } else {
+                    clearInterval(element.timeId);
+                    element.style.left = target + "px";
+                }
+            }, 20);
+
+        }
+    </script>
+    <script>
+        //获取到的图片数据img
+        var imgarr = ["../images/1.jpg", "../images/2.jpg", "../images/3.jpg", "../images/4.jpg", "../images/5.jpg", "../images/6.jpg"];
+
+        //将图片加载到页面,和下标a链接添加到页面
+        var uu = my$("uu");
+        var oo = my$("oo");
+        for (let i = 0; i < imgarr.length; i++) {
+            var uli = document.createElement("li");
+            var uimg = document.createElement("img");
+            uimg.src = imgarr[i];
+            uu.appendChild(uli);
+            uli.setAttribute("index", i);
+            uli.appendChild(uimg);
+
+            var oli = document.createElement("li");
+            var oa = document.createElement("a");
+            oa.innerHTML = i + 1;
+            oo.appendChild(oli);
+            oli.appendChild(oa);
+
+        }
+        var uli = document.createElement("li");
+        var uimg = document.createElement("img");
+        uimg.src = imgarr[0];
+        uu.appendChild(uli);
+        uli.setAttribute("index", imgarr.length + 1);
+        uli.appendChild(uimg);
+    </script>
+
+    <script>
+        //当前显示的图片        
+        var index = 0;
+        //为a链接添加鼠标进入事件
+        var lias = my$("oo").children;
+        for (let i = 0; i < lias.length; i++) {
+            const element = lias[i];
+            element.onmouseenter = function() {
+                anim(my$("uu"), -(i * 830));
+                index = i;
+                element.children[0].style.backgroundColor = "#fff";
+                element.children[0].style.color = "#000";
+            };
+            element.onmouseleave = function() {
+                element.children[0].style.backgroundColor = "#333";
+                element.children[0].style.color = "#fff";
+            }
+
+
+        }
+
+        //为左右按钮添加点击事件
+
+
+        //左侧按钮点击
+        my$("left").onclick = function() {
+            index--;
+            console.log(index);
+            if (index <= 0) {
+                index = imgarr.length;
+                my$("uu").style.left = -index * 830 + "px";
+                anim(my$("uu"), (-index + 1) * 830);
+            } else {
+                anim(my$("uu"), (-index + 1) * 830);
+            }
+        }
+
+        //右侧按钮点击
+        my$("right").onclick = function f1() {
+            index++;
+
+            if (index > imgarr.length) {
+                index = 1;
+                my$("uu").style.left = 0 + "px";
+                anim(my$("uu"), -index * 830);
+            } else {
+                anim(my$("uu"), -index * 830);
+            }
+
+        }
+        var timeis = setInterval(function() {
+            my$("right").onclick();
+        }, 1000 * 2);
+
+        //鼠标进入暂停动画
+        my$("wapper").onmouseover = function() {
+            clearInterval(timeis);
+        }
+        my$("wapper").onmouseout = function() {
+            timeis = setInterval(function() {
+                my$("right").onclick();
+            }, 1000 * 3);
+        }
+    </script>
+
+</body>
+
+</html>
